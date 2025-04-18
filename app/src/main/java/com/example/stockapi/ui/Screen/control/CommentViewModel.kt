@@ -54,6 +54,18 @@ class CommentViewModel(
             }
         }
     }
+
+    fun putComment(title: String, content: String, id: Int) {
+        viewModelScope.launch {
+            _uiState.value = CommentUiState.Loading
+            try {
+                val response = repository.putComment(title, content, id)
+                _uiState.value = CommentUiState.Success(response)
+            } catch (e: Exception) {
+                _uiState.value = CommentUiState.Error(e.message ?: "Put Comment failed")
+            }
+        }
+    }
 }
 
 sealed class CommentUiState {

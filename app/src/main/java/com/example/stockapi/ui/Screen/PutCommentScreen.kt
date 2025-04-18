@@ -5,12 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -29,18 +25,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.stockapi.data.model.PutComment
 import com.example.stockapi.data.remote.CommentRepository
 import com.example.stockapi.ui.Screen.control.CommentUiState
 import com.example.stockapi.ui.Screen.control.CommentViewModel
 import com.example.stockapi.ui.Screen.control.CommentViewModelFactory
 
 @Composable
-fun AddCommentScreen(
+fun PutCommentScreen(
+    id: Int,
+    title: String,
+    content: String,
     stockId: Int,
     navController: NavController
 ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(title) }
+    var content by remember { mutableStateOf(content) }
     val context = LocalContext.current
 
     val viewModel: CommentViewModel = viewModel(
@@ -50,9 +50,9 @@ fun AddCommentScreen(
 
     LaunchedEffect(uiState) {
         if (uiState is CommentUiState.Success) {
-            Toast.makeText(context, "Comment added successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Comment put successfully!", Toast.LENGTH_SHORT).show()
             navController.navigate("comment/$stockId") {
-                popUpTo("addComment/$stockId") { inclusive = true }
+                navController.popBackStack()
             }
         }
     }
@@ -60,8 +60,7 @@ fun AddCommentScreen(
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         OutlinedTextField(
             value = title,
@@ -79,23 +78,25 @@ fun AddCommentScreen(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        when(val currentState = uiState) {
+        when(uiState) {
             is CommentUiState.Loading -> {
-                CircularProgressIndicator()
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
             is CommentUiState.Error -> {
                 Text(
-                    text = viewModel.error.value ?: "Error add comment!",
+                    text = viewModel.error.value ?: "Put Error",
                     color = MaterialTheme.colorScheme.error
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Button(
                     onClick = {
                         if (title.isBlank() || content.isBlank()) {
-                            Toast.makeText(context, "Please enter title and content", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Please enter title and content!", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        viewModel.addCommentByStockId(title, content, stockId)
+                        viewModel.putComment(title, content, id)
                     }
                 ) {
                     Text("Try Again")
@@ -105,50 +106,15 @@ fun AddCommentScreen(
                 Button(
                     onClick = {
                         if (title.isBlank() || content.isBlank()) {
-                            Toast.makeText(context, "Please enter title and content", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Please enter title and content!", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        viewModel.addCommentByStockId(title, content, stockId)
+                        viewModel.putComment(title, content, id)
                     }
                 ) {
-                    Text("Add")
+                    Text("Edit")
                 }
             }
         }
-
-//        if (viewModel.isLoading.value) {
-//            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-//                CircularProgressIndicator()
-//            }
-//        } else if (viewModel.error.value != null) {
-//            Text(
-//                text = viewModel.error.value!!,
-//                color = MaterialTheme.colorScheme.error
-//            )
-//            Spacer(modifier = Modifier.height(4.dp))
-//            Button(
-//                onClick = {
-//                    if (title.isBlank() || content.isBlank()) {
-//                        Toast.makeText(context, "Please enter title and content", Toast.LENGTH_SHORT).show()
-//                        return@Button
-//                    }
-//                    viewModel.addCommentByStockId(title, content, stockId)
-//                }
-//            ) {
-//                Text("Try Again")
-//            }
-//        } else {
-//            Button(
-//                onClick = {
-//                    if (title.isBlank() || content.isBlank()) {
-//                        Toast.makeText(context, "Please enter title and content", Toast.LENGTH_SHORT).show()
-//                        return@Button
-//                    }
-//                    viewModel.addCommentByStockId(title, content, stockId)
-//                }
-//            ) {
-//                Text("Login")
-//            }
-//        }
     }
 }

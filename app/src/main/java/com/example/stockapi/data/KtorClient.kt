@@ -26,7 +26,7 @@ object KtorClient {
         }
 
         defaultRequest {
-            url("http://192.168.101.8:5295/api/")
+            url("http://192.168.101.13:5295/api/")
         }
 
         install(Logging) {

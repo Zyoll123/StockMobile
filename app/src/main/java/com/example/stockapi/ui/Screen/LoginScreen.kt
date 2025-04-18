@@ -76,7 +76,7 @@ fun LoginScreen(
                             Toast.makeText(context, "Please enter username and password", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        viewModel.login(username, password)
+                        viewModel.login(context, username, password)
                     }
                 ) {
                     Text("Try Again")
@@ -84,7 +84,7 @@ fun LoginScreen(
             }
             is AccountUiState.Success -> {
                 LaunchedEffect(key1 = Unit) {
-                    viewModel.login(username, password)
+                    viewModel.login(context, username, password)
                 }
             }
             else -> {
@@ -94,7 +94,7 @@ fun LoginScreen(
                             Toast.makeText(context, "Please enter username and password", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        viewModel.login(username, password)
+                        viewModel.login(context, username, password)
                     }
                 ) {
                     Text("Login")

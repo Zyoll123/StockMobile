@@ -17,3 +17,9 @@ data class CreateComment(
     val content: String,
     val stockId: Int
 )
+
+@Serializable
+data class PutComment(
+    val title: String,
+    val content: String
+)
