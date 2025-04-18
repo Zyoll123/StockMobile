@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.stockapi.ui.Screen.AddCommentScreen
 import com.example.stockapi.ui.Screen.CommentScreen
 import com.example.stockapi.ui.Screen.control.AccountUiState
 import com.example.stockapi.ui.Screen.control.AccountViewModel
@@ -38,14 +39,25 @@ fun AppScreen(
             }
         }
         composable("home") {
-            HomeScreen(onCommentsClick = { stockId ->
-                navController.navigate("comment/$stockId")
-            })
+            HomeScreen(
+                onCommentsClick = { stockId ->
+                    navController.navigate("comment/$stockId")
+                },
+                onAddCommentClick = { stockId ->
+                    navController.navigate("addComment/$stockId")
+                }
+            )
         }
         composable("comment/{stockId}") { backStackEntry ->
             val stockId = backStackEntry.arguments?.getString("stockId")?.toIntOrNull()
             if (stockId != null) {
                 CommentScreen(stockId = stockId)
+            }
+        }
+        composable("addComment/{stockId}") { value ->
+            val stockId = value.arguments?.getString("stockId")?.toIntOrNull()
+            if (stockId != null) {
+                AddCommentScreen(stockId)
             }
         }
     }

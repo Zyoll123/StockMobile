@@ -10,3 +10,10 @@ data class Comment(
     val createdOn: String,
     val stockId: Int
 )
+
+@Serializable
+data class CreateComment(
+    val title: String,
+    val content: String,
+    val stockId: Int
+)

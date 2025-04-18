@@ -34,7 +34,8 @@ import com.example.stockapi.ui.Screen.control.StockViewModelFactory
 
 @Composable
 fun HomeScreen(
-    onCommentsClick: (Int) -> Unit
+    onCommentsClick: (Int) -> Unit,
+    onAddCommentClick: (Int) -> Unit
 ) {
 //    val repository = remember { StockRepository() }
     val viewModel: StockViewModel = viewModel(
@@ -61,7 +62,11 @@ fun HomeScreen(
                 .padding(WindowInsets.systemBars.asPaddingValues())
         ) {
             items(viewModel.stocks) {stock ->
-                CardStock(stock, onCommentsClick = { onCommentsClick(stock.id)})
+                CardStock(
+                    stock,
+                    onCommentsClick = { onCommentsClick(stock.id)},
+                    onAddCommentClick = { onAddCommentClick(stock.id)}
+                )
             }
         }
     }
@@ -70,7 +75,8 @@ fun HomeScreen(
 @Composable
 fun CardStock(
     stock: Stock,
-    onCommentsClick: (Int) -> Unit
+    onCommentsClick: (Int) -> Unit,
+    onAddCommentClick: (Int) -> Unit
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -105,6 +111,10 @@ fun CardStock(
 
             Button(onClick = { onCommentsClick(stock.id) }) {
                 Text("View Comments")
+            }
+
+            Button(onClick = { onAddCommentClick(stock.id)}) {
+                Text("Add Comment")
             }
         }
     }
